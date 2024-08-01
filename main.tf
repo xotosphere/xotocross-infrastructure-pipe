@@ -119,8 +119,8 @@ module "fluentbit" {
   xtcross-container-definition = local.xtcross-container-definition
   xtcross-healthcheck-pathlist = local.xtcross-healthcheck-pathlist
   xtcross-listener-hostlist    = local.xtcross-listener-hostlist
-  xtcross-container-portlist   = jsondecode(local.xtcross-container-portlist-decoded)
-  xtcross-host-portlist        = jsondecode(local.xtcross-host-portlist-decoded)
+  xtcross-container-portlist = [for port in local.xtcross-container-portlist-decoded : jsondecode(port)]
+  xtcross-host-portlist = [for port in local.xtcross-host-portlist-decoded : jsondecode(port)]
 }
 
 module "elb" {
