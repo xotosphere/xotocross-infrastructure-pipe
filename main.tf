@@ -9,8 +9,8 @@ terraform {
 variable "region" { default = "eu-west-3" }
 variable "environment" { default = "staging" }
 variable "xtcross-account-id" {}
-variable "xtcross-container-portlist" { default = jsondecode("[80, 8081]") }
-variable "xtcross-host-portlist" { default = jsondecode("[8080, 8081]") }
+variable "xtcross-container-portlist" { default = [80, 8081] }
+variable "xtcross-host-portlist" { default = [8080, 8081]  }
 variable "xtcross-cluster-name" { default = "xtcross-staging-ecs" }
 variable "xtcross-organization" { default = "xotosphere" }
 variable "xtcross-domain-name" { default = "xotosphere" }
@@ -111,7 +111,7 @@ module "fluentbit" {
   environment                  = var.environment
   xtcross-service-version      = var.xtcross-service-version
   xtcross-service-name         = var.xtcross-service-name
-  xtcross-enable-monitor       = var.xtcross-enable-monitor
+  xtcross-enable-monitor       = tobool(var.xtcross-enable-monitor)
   xtcross-domain-name          = var.xtcross-domain-name
   xtcross-container-definition = local.xtcross-container-definition
   xtcross-healthcheck-pathlist = local.xtcross-healthcheck-pathlist
