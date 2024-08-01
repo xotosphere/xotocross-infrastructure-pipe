@@ -60,7 +60,7 @@ data "aws_iam_role" "xtcross-lambda-role" {
 
 locals {
   xtcross-container-portlist-decoded = split(",", var.xtcross-container-portlist)
-  xtcross-host-portlist-decoded = split(",", var.xtcross-container-portlist)
+  xtcross-host-portlist-decoded = split(",", var.xtcross-host-portlist)
   
   xtcross-container-front = jsondecode(templatefile("${path.module}/aws/task-container.tpl", {
     xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"
@@ -68,7 +68,7 @@ locals {
     xtcross-container-cpu                   = 128
     xtcross-container-memory                = 256
     xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = var.xtcross-container-portlist-decoded[0], hostPort = var.xtcross-container-portlist-decoded[0], protocol = "tcp" }])
+    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-decoded[0], hostPort = local.xtcross-host-portlist-decoded[0], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }, { name = "BACKEND_URL", value = "https://demoback-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com" }])
     xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
     xtcross-container-region                = var.region
@@ -86,7 +86,7 @@ locals {
     xtcross-container-cpu                   = 128
     xtcross-container-memory                = 256
     xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = var.xtcross-container-portlist-decoded[1], hostPort = var.xtcross-container-portlist-decoded[1], protocol = "tcp" }])
+    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-decoded[1], hostPort = local.xtcross-host-portlist-decoded[1], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }])
     xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
     xtcross-container-region                = var.region
@@ -119,8 +119,8 @@ module "fluentbit" {
   xtcross-container-definition = local.xtcross-container-definition
   xtcross-healthcheck-pathlist = local.xtcross-healthcheck-pathlist
   xtcross-listener-hostlist    = local.xtcross-listener-hostlist
-  xtcross-container-portlist   = jsondecode(var.xtcross-container-portlist-decoded)
-  xtcross-host-portlist        = jsondecode(var.xtcross-container-portlist-decoded)
+  xtcross-container-portlist   = jsondecode(local.xtcross-container-portlist-decoded)
+  xtcross-host-portlist        = jsondecode(local.xtcross-host-portlist-decoded)
 }
 
 module "elb" {
