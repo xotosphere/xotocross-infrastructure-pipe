@@ -9,8 +9,8 @@ terraform {
 variable "region" { default = "eu-west-3" }
 variable "environment" { default = "staging" }
 variable "xtcross-account-id" {}
-variable "xtcross-container-portlist" { default = "80,8081" } 
-variable "xtcross-host-portlist" { default = "8080,8081" } 
+variable "xtcross-container-portlist" { default = "80,8081" }
+variable "xtcross-host-portlist" { default = "8080,8081" }
 variable "xtcross-cluster-name" { default = "xtcross-staging-ecs" }
 variable "xtcross-organization" { default = "xotosphere" }
 variable "xtcross-domain-name" { default = "xotosphere" }
@@ -60,8 +60,8 @@ data "aws_iam_role" "xtcross-lambda-role" {
 
 locals {
   xtcross-container-portlist-decoded = split(",", var.xtcross-container-portlist)
-  xtcross-host-portlist-decoded = split(",", var.xtcross-host-portlist)
-  
+  xtcross-host-portlist-decoded      = split(",", var.xtcross-host-portlist)
+
   xtcross-container-front = jsondecode(templatefile("${path.module}/aws/task-container.tpl", {
     xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"
     xtcross-container-image                 = "ghcr.io/${var.xtcross-organization}/${var.xtcross-service-name}-${var.xtcross-service-name}front:latest"
@@ -119,8 +119,8 @@ module "fluentbit" {
   xtcross-container-definition = local.xtcross-container-definition
   xtcross-healthcheck-pathlist = local.xtcross-healthcheck-pathlist
   xtcross-listener-hostlist    = local.xtcross-listener-hostlist
-  xtcross-container-portlist = [for port in local.xtcross-container-portlist-decoded : jsondecode(port)]
-  xtcross-host-portlist = [for port in local.xtcross-host-portlist-decoded : jsondecode(port)]
+  xtcross-container-portlist   = [for port in local.xtcross-container-portlist-decoded : jsondecode(port)]
+  xtcross-host-portlist        = [for port in local.xtcross-host-portlist-decoded : jsondecode(port)]
 }
 
 module "elb" {
@@ -185,8 +185,6 @@ module "route53" {
 module "scheduletask" {
   source                  = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/scheduletask"
   environment             = var.environment
-  xtcross-task-count      = 1
-  xtcross-service-name    = "xtcross-${var.xtcross-service-name}-${var.environment}-service"
   xtcross-lambda-role-arn = data.aws_iam_role.xtcross-lambda-role.arn
   xtcross-function-name   = "xtcross-${var.xtcross-service-name}-${var.environment}-scheduletask"
 }
