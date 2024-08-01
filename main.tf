@@ -18,6 +18,7 @@ variable "xtcross-service-name" { default = "demo" }
 variable "xtcross-service-version" {}
 variable "xtcross-healthcheck-interval" { default = 60 }
 variable "xtcross-password" {}
+variable "xtcross-enable-monitor" { default = false }
 variable "xtcross-username" {}
 
 ####################### DATA
@@ -110,7 +111,7 @@ module "fluentbit" {
   environment                  = var.environment
   xtcross-service-version      = var.xtcross-service-version
   xtcross-service-name         = var.xtcross-service-name
-  xtcross-enable-monitor       = true
+  xtcross-enable-monitor       = var.xtcross-enable-monitor
   xtcross-domain-name          = var.xtcross-domain-name
   xtcross-container-definition = local.xtcross-container-definition
   xtcross-healthcheck-pathlist = local.xtcross-healthcheck-pathlist
