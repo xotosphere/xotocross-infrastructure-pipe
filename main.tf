@@ -65,7 +65,7 @@ locals {
     xtcross-container-cpu                   = 128
     xtcross-container-memory                = 256
     xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = "${jsondecode(var.xtcross-container-portlist[0])}", hostPort = "${jsondecode(var.xtcross-host-portlist[0])}", protocol = "tcp" }])
+    xtcross-container-portmap               = jsonencode([{ containerPort = var.xtcross-container-portlist[0], hostPort = var.xtcross-host-portlist[0], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }, { name = "BACKEND_URL", value = "https://demoback-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com" }])
     xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
     xtcross-container-region                = var.region
@@ -83,7 +83,7 @@ locals {
     xtcross-container-cpu                   = 128
     xtcross-container-memory                = 256
     xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = "${jsondecode(var.xtcross-container-portlist[1])}", hostPort = "${jsondecode(var.xtcross-host-portlist[1])}", protocol = "tcp" }])
+    xtcross-container-portmap               = jsonencode([{ containerPort = var.xtcross-container-portlist[1], hostPort = var.xtcross-host-portlist[1], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }])
     xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
     xtcross-container-region                = var.region
