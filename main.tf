@@ -18,7 +18,10 @@ variable "xtcross-service-name" { default = "demo" }
 variable "xtcross-service-version" {}
 variable "xtcross-healthcheck-interval" { default = 60 }
 variable "xtcross-password" {}
+variable "xtcross-path-list" {default = "'/,/item-list'"}
 variable "xtcross-enable-monitor" { default = false }
+variable "xtcross-enable-front" { default = false }
+variable "xtcross-enable-back" { default = false }
 variable "xtcross-username" {}
 
 ####################### DATA
@@ -59,16 +62,17 @@ data "aws_iam_role" "xtcross-lambda-role" {
 ####################### LOCAL
 
 locals {
-  xtcross-container-portlist-decoded = [for port in split(",", var.xtcross-container-portlist) : tonumber(port)]
-  xtcross-host-portlist-decoded      = [for port in split(",", var.xtcross-host-portlist) : tonumber(port)]
-
+  xtcross-container-portlist-array = [for port in split(",", var.xtcross-container-portlist) : tonumber(port)]
+  xtcross-host-portlist-array      = [for port in split(",", var.xtcross-host-portlist) : tonumber(port)]
+  xtcross-path-list-array      = [for port in split(",", var.xtcross-path-list) : port]
+  
   xtcross-container-front = jsondecode(templatefile("${path.module}/aws/task-container.tpl", {
     xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"
     xtcross-container-image                 = "ghcr.io/${var.xtcross-organization}/${var.xtcross-service-name}-${var.xtcross-service-name}front:latest"
     xtcross-container-cpu                   = 128
     xtcross-container-memory                = 256
     xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-decoded[0], hostPort = local.xtcross-host-portlist-decoded[0], protocol = "tcp" }])
+    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-array[0], hostPort = local.xtcross-host-portlist-array[0], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }, { name = "BACKEND_URL", value = "https://demoback-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com" }])
     xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
     xtcross-container-region                = var.region
@@ -86,7 +90,7 @@ locals {
     xtcross-container-cpu                   = 128
     xtcross-container-memory                = 256
     xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-decoded[1], hostPort = local.xtcross-host-portlist-decoded[1], protocol = "tcp" }])
+    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-array[1], hostPort = local.xtcross-host-portlist-array[1], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }])
     xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
     xtcross-container-region                = var.region
@@ -98,12 +102,12 @@ locals {
     xtcross-container-mountpoint            = jsonencode([])
   }))
 
-  xtcross-container-definition = [local.xtcross-container-front, local.xtcross-container-back]
-  xtcross-healthcheck-pathlist = ["/", "/item-list"]
-  xtcross-listener-hostlist = [
-    "${var.xtcross-service-name}front-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com",
-    "${var.xtcross-service-name}back-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com"
-  ]
+  xtcross-container-definition = concat(tobool(var.xtcross-enable-front) ? [local.xtcross-container-front] : [], tobool(var.xtcross-enable-back) ? [local.xtcross-container-back] : [])
+  xtcross-healthcheck-pathlist = locals.xtcross-path-list-array
+  xtcross-listener-hostlist = concat(
+    tobool(var.xtcross-enable-front) ? ["${var.xtcross-service-name}front-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com"] : [],
+    tobool(var.xtcross-enable-back) ? ["${var.xtcross-service-name}back-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com"] : []
+  )
 }
 
 ####################### MODULE
@@ -119,8 +123,8 @@ module "fluentbit" {
   xtcross-container-definition = local.xtcross-container-definition
   xtcross-healthcheck-pathlist = local.xtcross-healthcheck-pathlist
   xtcross-listener-hostlist    = local.xtcross-listener-hostlist
-  xtcross-container-portlist   = [for port in local.xtcross-container-portlist-decoded : jsondecode(port)]
-  xtcross-host-portlist        = [for port in local.xtcross-host-portlist-decoded : jsondecode(port)]
+  xtcross-container-portlist   = [for port in local.xtcross-container-portlist-array : jsondecode(port)]
+  xtcross-host-portlist        = [for port in local.xtcross-host-portlist-array : jsondecode(port)]
 }
 
 module "elb" {
