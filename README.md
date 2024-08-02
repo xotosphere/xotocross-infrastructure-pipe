@@ -42,7 +42,7 @@ The pipeline is used in GitHub Actions workflows as follows:
       - name: Load .env file
         run: grep -o '^[^#]*' .env.xotocross >> "$GITHUB_ENV"
 
-      - name: Gather Environments
+      - name: Gather Environment
         run: |
           echo "access-key=$XOTOCROSS_AWS_ACCESS_KEY" >> "$GITHUB_OUTPUT"
           echo "key-id=$XOTOCROSS_AWS_KEY_ID" >> "$GITHUB_OUTPUT"

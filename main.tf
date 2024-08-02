@@ -6,22 +6,22 @@ terraform {
 
 ####################### VARIABLE
 
-variable "region" { default = "eu-west-3" }
-variable "environment" { default = "staging" }
+variable "region" {}
+variable "environment" {}
 variable "xtcross-account-id" {}
-variable "xtcross-container-portlist" { default = "80,8081" }
-variable "xtcross-host-portlist" { default = "8080,8081" }
-variable "xtcross-cluster-name" { default = "xtcross-staging-ecs" }
-variable "xtcross-organization" { default = "xotosphere" }
-variable "xtcross-domain-name" { default = "xotosphere" }
-variable "xtcross-service-name" { default = "demo" }
+variable "xtcross-container-portlist" {}
+variable "xtcross-host-portlist" {}
+variable "xtcross-cluster-name" {}
+variable "xtcross-organization" {}
+variable "xtcross-domain-name" {}
+variable "xtcross-service-name" {}
 variable "xtcross-service-version" {}
-variable "xtcross-healthcheck-interval" { default = 60 }
+variable "xtcross-healthcheck-interval" {}
 variable "xtcross-password" {}
-variable "xtcross-path-list" {default = "'/,/item-list'"}
-variable "xtcross-enable-monitor" { default = false }
-variable "xtcross-enable-front" { default = false }
-variable "xtcross-enable-back" { default = false }
+variable "xtcross-path-list" {}
+variable "xtcross-enable-monitor" {}
+variable "xtcross-enable-front" {}
+variable "xtcross-enable-back" {}
 variable "xtcross-username" {}
 
 ####################### DATA
@@ -200,9 +200,9 @@ module "grafana" {
   xtcross-domain-name  = var.xtcross-domain-name
   xtcross-password     = var.xtcross-password
   xtcross-username     = var.xtcross-username
-  container_name_list = [
-    "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front",
-    "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"
-  ]
+  xtcross-container-namelist = concat(
+    tobool(var.xtcross-enable-front) ? ["xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"] : [],
+    tobool(var.xtcross-enable-back) ? ["xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"] : []
+  )
 }
 
