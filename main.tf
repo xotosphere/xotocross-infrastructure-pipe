@@ -79,7 +79,9 @@ locals {
     xtcross-container-command               = jsonencode([])
     xtcross-container-dependency            = jsonencode([])
     xtcross-container-entrypoint            = jsonencode([])
-    xtcross-container-firelensconfiguration = "null"
+    xtcross-container-firelensconfiguration = jsonencode({
+        type = "fluentd"
+    })    
     xtcross-container-healthcheck           = "null"
     xtcross-container-mountpoint            = jsonencode([])
   }))
@@ -97,7 +99,9 @@ locals {
     xtcross-container-command               = jsonencode([])
     xtcross-container-dependency            = jsonencode([])
     xtcross-container-entrypoint            = jsonencode([])
-    xtcross-container-firelensconfiguration = "null"
+    xtcross-container-firelensconfiguration = jsonencode({
+        type = "fluentd"
+    })
     xtcross-container-healthcheck           = "null"
     xtcross-container-mountpoint            = jsonencode([])
   }))
