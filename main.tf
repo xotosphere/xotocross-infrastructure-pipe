@@ -64,8 +64,8 @@ data "aws_iam_role" "xtcross-lambda-role" {
 locals {
   xtcross-container-portlist-array = [for port in split(",", var.xtcross-container-portlist) : tonumber(port)]
   xtcross-host-portlist-array      = [for port in split(",", var.xtcross-host-portlist) : tonumber(port)]
-  xtcross-path-list-array      = [for port in split(",", var.xtcross-path-list) : port]
-  
+  xtcross-path-list-array          = [for port in split(",", var.xtcross-path-list) : port]
+
   xtcross-container-front = jsondecode(templatefile("${path.module}/aws/task-container.tpl", {
     xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"
     xtcross-container-image                 = "ghcr.io/${var.xtcross-organization}/${var.xtcross-service-name}-${var.xtcross-service-name}front:latest"
@@ -79,9 +79,7 @@ locals {
     xtcross-container-command               = jsonencode([])
     xtcross-container-dependency            = jsonencode([])
     xtcross-container-entrypoint            = jsonencode([])
-    xtcross-container-firelensconfiguration = jsonencode({
-        type = "fluentd"
-    })    
+    xtcross-container-firelensconfiguration = "null"
     xtcross-container-healthcheck           = "null"
     xtcross-container-mountpoint            = jsonencode([])
   }))
@@ -99,9 +97,7 @@ locals {
     xtcross-container-command               = jsonencode([])
     xtcross-container-dependency            = jsonencode([])
     xtcross-container-entrypoint            = jsonencode([])
-    xtcross-container-firelensconfiguration = jsonencode({
-        type = "fluentd"
-    })
+    xtcross-container-firelensconfiguration = "null"
     xtcross-container-healthcheck           = "null"
     xtcross-container-mountpoint            = jsonencode([])
   }))
