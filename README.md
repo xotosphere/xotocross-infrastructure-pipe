@@ -47,8 +47,8 @@ The pipeline is used in GitHub Actions workflows as follows:
           echo "access-key=$XOTOCROSS_AWS_ACCESS_KEY" >> "$GITHUB_OUTPUT"
           echo "key-id=$XOTOCROSS_AWS_KEY_ID" >> "$GITHUB_OUTPUT"
           echo "aws-id=$XOTOCROSS_AWS_PROFILE_ID" >> "$GITHUB_OUTPUT"
-          echo "cross-username=$XOTOCROSS_CROSS_LOGIN_USERNAME" >> "$GITHUB_OUTPUT"
-          echo "cross-password=$XOTOCROSS_CROSS_LOGIN_PASSWORD" >> "$GITHUB_OUTPUT"
+          echo "username=$XOTOCROSS_CROSS_LOGIN_USERNAME" >> "$GITHUB_OUTPUT"
+          echo "password=$XOTOCROSS_CROSS_LOGIN_PASSWORD" >> "$GITHUB_OUTPUT"
         id: xtcross_aws_credential
 
       - name: Configure AWS credentials
@@ -80,8 +80,8 @@ The pipeline is used in GitHub Actions workflows as follows:
           terraform apply -auto-approve \
           -var environment=${{ env.ENVIRONMENT }} \
           -var xtcross-cluster-name="xtcross-${{ env.ENVIRONMENT }}-ecs" \
-          -var xtcross-password="${{ steps.xtcross_aws_credential.outputs.cross-password }}" \
-          -var xtcross-username="${{ steps.xtcross_aws_credential.outputs.cross-username }}" \
+          -var xtcross-password="${{ steps.xtcross_aws_credential.outputs.password }}" \
+          -var xtcross-username="${{ steps.xtcross_aws_credential.outputs.username }}" \
           -var xtcross-service-version="0.0.0" \
           -var xtcross-account-id=${{ steps.xtcross_aws_credential.outputs.aws-id }} \
           -var xtcross-container-portlist='80,8081' \
