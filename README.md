@@ -70,7 +70,7 @@ The pipeline is used in GitHub Actions workflows as follows:
           -backend-config="key=${{ env.ENVIRONMENT }}/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}.tfstate" \
           -backend-config="access_key=$XOTOCROSS_AWS_KEY_ID" \
           -backend-config="secret_key=$XOTOCROSS_AWS_ACCESS_KEY" \
-          -backend-config="region=${{ env.REGION }}" \
+          -backend-config="region="${{ env.REGION }}"" \
           -reconfigure
       
       - name: Terraform Apply
@@ -78,7 +78,7 @@ The pipeline is used in GitHub Actions workflows as follows:
           ENVIRONMENT: ${{ env.ENVIRONMENT }}
         run: |
           terraform apply -auto-approve \
-          -var environment=${{ env.ENVIRONMENT }} \
+          -var environment="${{ env.ENVIRONMENT }}" \
           -var xtcross-cluster-name="xtcross-${{ env.ENVIRONMENT }}-ecs" \
           -var xtcross-password="${{ steps.xtcross_aws_credential.outputs.password }}" \
           -var xtcross-username="${{ steps.xtcross_aws_credential.outputs.username }}" \
