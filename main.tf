@@ -103,7 +103,7 @@ locals {
   }))
 
   xtcross-container-definition = concat(tobool(var.xtcross-enable-front) ? [local.xtcross-container-front] : [], tobool(var.xtcross-enable-back) ? [local.xtcross-container-back] : [])
-  xtcross-healthcheck-pathlist = locals.xtcross-path-list-array
+  xtcross-healthcheck-pathlist = local.xtcross-path-list-array
   xtcross-listener-hostlist = concat(
     tobool(var.xtcross-enable-front) ? ["${var.xtcross-service-name}front-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com"] : [],
     tobool(var.xtcross-enable-back) ? ["${var.xtcross-service-name}back-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com"] : []
