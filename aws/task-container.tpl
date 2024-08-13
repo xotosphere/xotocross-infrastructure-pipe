@@ -2,7 +2,6 @@
 	"name": "${xtcross-container-name}",
 	"image": "${xtcross-container-image}",
 	"cpu": ${xtcross-container-cpu},
-	"memory": ${xtcross-container-memory},
 	"essential":  ${xtcross-container-essential},
 	"portMappings": ${xtcross-container-portmap},
 	"environment" : ${xtcross-container-environment},

@@ -70,7 +70,6 @@ locals {
     xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"
     xtcross-container-image                 = "ghcr.io/${var.xtcross-organization}/${var.xtcross-service-name}-${var.xtcross-service-name}front:latest"
     xtcross-container-cpu                   = 128
-    xtcross-container-memory                = 256
     xtcross-container-essential             = true
     xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-array[0], hostPort = local.xtcross-host-portlist-array[0], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }, { name = "BACKEND_URL", value = "https://demoback-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com" }])
@@ -88,7 +87,6 @@ locals {
     xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"
     xtcross-container-image                 = "ghcr.io/${var.xtcross-organization}/${var.xtcross-service-name}-${var.xtcross-service-name}back:latest"
     xtcross-container-cpu                   = 128
-    xtcross-container-memory                = 256
     xtcross-container-essential             = true
     xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-array[1], hostPort = local.xtcross-host-portlist-array[1], protocol = "tcp" }])
     xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }])
@@ -169,6 +167,7 @@ module "service" {
   xtcross-network-mode          = "bridge"
   xtcross-healthcheck-grace     = 60
   xtcross-listener-hostlist     = module.fluentbit.xtcross-listener-hostlist
+  xtcross-task-memory           = 512
 }
 
 module "cloudwatch" {
