@@ -193,13 +193,11 @@ module "scheduletask" {
 module "grafana" {
   source               = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/cross/grafana"
   environment          = var.environment
+  xtcross-enable-monitor = tobool(var.xtcross-enable-monitor)
   xtcross-service-name = var.xtcross-service-name
   xtcross-domain-name  = var.xtcross-domain-name
   xtcross-password     = var.xtcross-password
   xtcross-username     = var.xtcross-username
-  xtcross-container-namelist = concat(
-    tobool(var.xtcross-enable-front) ? ["xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"] : [],
-    tobool(var.xtcross-enable-back) ? ["xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"] : []
-  )
+  xtcross-container-namelist = ["xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front", "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"]
 }
 
