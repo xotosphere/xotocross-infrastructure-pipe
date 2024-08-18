@@ -1,10 +1,3 @@
-####################### PROVIDER
-
-terraform {
-  backend "s3" {}
-}
-
-
 ####################### MODULE
 
 module "fluentbit" {
