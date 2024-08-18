@@ -4,107 +4,6 @@ terraform {
   backend "s3" {}
 }
 
-####################### VARIABLE
-
-variable "region" {}
-variable "environment" {}
-variable "xtcross-account-id" {}
-variable "xtcross-container-portlist" {}
-variable "xtcross-host-portlist" {}
-variable "xtcross-cluster-name" {}
-variable "xtcross-organization" {}
-variable "xtcross-domain-name" {}
-variable "xtcross-service-name" {}
-variable "xtcross-service-version" {}
-variable "xtcross-healthcheck-interval" {}
-variable "xtcross-password" {}
-variable "xtcross-path-list" {}
-variable "xtcross-enable-monitor" {}
-variable "xtcross-enable-front" {}
-variable "xtcross-enable-back" {}
-variable "xtcross-username" {}
-
-####################### DATA
-
-data "aws_vpc" "xtcross-vpc" {
-  filter {
-    name   = "tag:Name"
-    values = ["xtcross-${var.environment}-vpc"]
-  }
-}
-
-data "aws_security_group" "xtcross-securitygroup" {
-  vpc_id = data.aws_vpc.xtcross-vpc.id
-  filter {
-    name   = "tag:Name"
-    values = ["xtcross-${var.environment}-securitygroup"]
-  }
-}
-
-data "aws_subnets" "xtcross-public-subnetlist" {
-  filter {
-    name   = "tag:Name"
-    values = ["xtcross-${var.environment}-public-subnet-0", "xtcross-${var.environment}-public-subnet-1"]
-  }
-}
-
-data "aws_subnets" "xtcross-private-subnetlist" {
-  filter {
-    name   = "tag:Name"
-    values = ["xtcross-${var.environment}-private-subnet-0", "xtcross-${var.environment}-private-subnet-1"]
-  }
-}
-
-data "aws_iam_role" "xtcross-lambda-role" {
-  name = "xtcross-${var.environment}-lambda-role"
-}
-
-####################### LOCAL
-
-locals {
-  xtcross-container-portlist-array = [for port in split(",", var.xtcross-container-portlist) : tonumber(port)]
-  xtcross-host-portlist-array      = [for port in split(",", var.xtcross-host-portlist) : tonumber(port)]
-  xtcross-path-list-array          = [for port in split(",", var.xtcross-path-list) : port]
-
-  xtcross-container-front = jsondecode(templatefile("${path.module}/aws/task-container.tpl", {
-    xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front"
-    xtcross-container-image                 = "ghcr.io/${var.xtcross-organization}/${var.xtcross-service-name}-${var.xtcross-service-name}front:latest"
-    xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-array[0], hostPort = local.xtcross-host-portlist-array[0], protocol = "tcp" }])
-    xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }, { name = "BACKEND_URL", value = "https://demoback-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com" }])
-    xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
-    xtcross-container-region                = var.region
-    xtcross-container-command               = jsonencode([])
-    xtcross-container-dependency            = jsonencode([])
-    xtcross-container-entrypoint            = jsonencode([])
-    xtcross-container-firelensconfiguration = "null"
-    xtcross-container-healthcheck           = "null"
-    xtcross-container-mountpoint            = jsonencode([])
-  }))
-
-  xtcross-container-back = jsondecode(templatefile("${path.module}/aws/task-container.tpl", {
-    xtcross-container-name                  = "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"
-    xtcross-container-image                 = "ghcr.io/${var.xtcross-organization}/${var.xtcross-service-name}-${var.xtcross-service-name}back:latest"
-    xtcross-container-essential             = true
-    xtcross-container-portmap               = jsonencode([{ containerPort = local.xtcross-container-portlist-array[1], hostPort = local.xtcross-host-portlist-array[1], protocol = "tcp" }])
-    xtcross-container-environment           = jsonencode([{ name = "environment", value = var.environment }])
-    xtcross-container-loggroup              = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
-    xtcross-container-region                = var.region
-    xtcross-container-command               = jsonencode([])
-    xtcross-container-dependency            = jsonencode([])
-    xtcross-container-entrypoint            = jsonencode([])
-    xtcross-container-firelensconfiguration = "null"
-    xtcross-container-healthcheck           = "null"
-    xtcross-container-mountpoint            = jsonencode([])
-  }))
-
-  xtcross-container-definition = concat(tobool(var.xtcross-enable-front) ? [local.xtcross-container-front] : [], tobool(var.xtcross-enable-back) ? [local.xtcross-container-back] : [])
-  xtcross-healthcheck-pathlist = local.xtcross-path-list-array
-  xtcross-listener-hostlist = concat(
-    tobool(var.xtcross-enable-front) ? ["${var.xtcross-service-name}front-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com"] : [],
-    tobool(var.xtcross-enable-back) ? ["${var.xtcross-service-name}back-${var.xtcross-service-name}.${var.environment}.${var.xtcross-domain-name}.com"] : []
-  )
-}
 
 ####################### MODULE
 
@@ -116,11 +15,11 @@ module "fluentbit" {
   xtcross-service-name         = var.xtcross-service-name
   xtcross-enable-monitor       = tobool(var.xtcross-enable-monitor)
   xtcross-domain-name          = var.xtcross-domain-name
-  xtcross-container-definition = local.xtcross-container-definition
-  xtcross-healthcheck-pathlist = local.xtcross-healthcheck-pathlist
-  xtcross-listener-hostlist    = local.xtcross-listener-hostlist
-  xtcross-container-portlist   = [for port in local.xtcross-container-portlist-array : jsondecode(port)]
-  xtcross-host-portlist        = [for port in local.xtcross-host-portlist-array : jsondecode(port)]
+  xtcross-container-definition = var.xtcross-container-definition
+  xtcross-healthcheck-pathlist = var.xtcross-healthcheck-pathlist
+  xtcross-listener-hostlist    = var.xtcross-listener-hostlist
+  xtcross-container-portlist   = var.xtcross-container-portlist
+  xtcross-host-portlist        = var.xtcross-host-portlist
 }
 
 module "elb" {
@@ -139,10 +38,10 @@ module "elb" {
   xtcross-public-subnetlist         = data.aws_subnets.xtcross-public-subnetlist.ids
   xtcross-private-subnetlist        = data.aws_subnets.xtcross-private-subnetlist.ids
   xtcross-unhealthy-threshhold      = 5
-  xtcross-healthcheck-interval      = var.xtcross-healthcheck-interval
+  xtcross-healthcheck-interval      = 60
   xtcross-domain-name               = var.xtcross-domain-name
   xtcross-healthcheck-pathlist      = module.fluentbit.xtcross-healthcheck-pathlist
-  xtcross-healthcheck-timeout       = floor(var.xtcross-healthcheck-interval / 2)
+  xtcross-healthcheck-timeout       = floor(60 / 2)
 }
 
 module "service" {
@@ -180,7 +79,7 @@ module "route53" {
   environment               = var.environment
   xtcross-domain-name       = var.xtcross-domain-name
   xtcross-loadbalaner-name  = module.elb.xtcross-loadbalaner-name
-  xtcross-listener-hostlist = local.xtcross-listener-hostlist
+  xtcross-listener-hostlist = var.xtcross-listener-hostlist
 }
 
 module "scheduletask" {
@@ -191,13 +90,13 @@ module "scheduletask" {
 }
 
 module "grafana" {
-  source               = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/cross/grafana"
-  environment          = var.environment
-  xtcross-enable-monitor = tobool(var.xtcross-enable-monitor)
-  xtcross-service-name = var.xtcross-service-name
-  xtcross-domain-name  = var.xtcross-domain-name
-  xtcross-password     = var.xtcross-password
-  xtcross-username     = var.xtcross-username
+  source                     = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/cross/grafana"
+  environment                = var.environment
+  xtcross-service-name       = var.xtcross-service-name
+  xtcross-domain-name        = var.xtcross-domain-name
+  xtcross-enable-monitor     = tobool(var.xtcross-enable-monitor)
+  xtcross-password           = var.xtcross-password
+  xtcross-username           = var.xtcross-username
   xtcross-container-namelist = ["xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front", "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"]
 }
 
