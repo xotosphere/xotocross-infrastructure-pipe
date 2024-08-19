@@ -17,6 +17,7 @@ variable "xtcross-container-definition" {}
 variable "xtcross-healthcheck-pathlist" {}
 variable "xtcross-listener-hostlist" {}
 variable "xtcross-vpn-security" {}
+variable "xtcross-task-memory" { default = 512 }
 
 ####################### DATA
 
@@ -112,7 +113,7 @@ module "service" {
   xtcross-network-mode          = "bridge"
   xtcross-healthcheck-grace     = 60
   xtcross-listener-hostlist     = module.fluentbit.xtcross-listener-hostlist
-  xtcross-task-memory           = 512
+  xtcross-task-memory           = var.xtcross-task-memory
 }
 
 module "cloudwatch" {
