@@ -31,7 +31,7 @@ data "aws_security_group" "xtcross-securitygroup" {
   vpc_id = data.aws_vpc.xtcross-vpc.id
   filter {
     name   = "tag:Name"
-    values = ["xtcross-${var.environment}-securitygroup-${xtcross-vpn-security == "public" ? "public" : "private"}"]
+    values = ["xtcross-${var.environment}-securitygroup-${var.xtcross-vpn-security == "public" ? "public" : "private"}"]
   }
 }
 
