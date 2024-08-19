@@ -16,6 +16,7 @@ variable "xtcross-username" {}
 variable "xtcross-container-definition" {}
 variable "xtcross-healthcheck-pathlist" {}
 variable "xtcross-listener-hostlist" {}
+variable "xtcross-vpn-security" {}
 
 ####################### DATA
 
@@ -30,7 +31,7 @@ data "aws_security_group" "xtcross-securitygroup" {
   vpc_id = data.aws_vpc.xtcross-vpc.id
   filter {
     name   = "tag:Name"
-    values = ["xtcross-${var.environment}-securitygroup-private"]
+    values = ["xtcross-${var.environment}-securitygroup-${xtcross-vpn-security == "public" ? "public" : "private"}"]
   }
 }
 
