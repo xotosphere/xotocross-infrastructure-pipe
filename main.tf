@@ -72,25 +72,25 @@ module "fluentbit" {
 }
 
 module "elb" {
-  source                            = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/elb"
-  environment                       = var.environment
-  region                            = var.region
-  xtcross-loadbalaner-name          = "xtcross-${var.xtcross-service-name}-${var.environment}-lb"
-  xtcross-host-portlist             = module.fluentbit.xtcross-host-portlist
-  xtcross-listener-portlist         = module.fluentbit.xtcross-host-portlist
-  xtcross-listener-hostlist         = module.fluentbit.xtcross-listener-hostlist
-  xtcross-targetgroup-name          = "xtcross-${var.xtcross-service-name}-${var.environment}-tg"
-  xtcross-target-type               = "instance"
-  xtcross-healthy-threshhold        = 3
-  xtcross-loadbalaner-securitygroup = data.aws_security_group.xtcross-securitygroup.id
-  xtcross-vpc-id                    = data.aws_vpc.xtcross-vpc.id
-  xtcross-public-subnetlist         = data.aws_subnets.xtcross-public-subnetlist.ids
-  xtcross-private-subnetlist        = data.aws_subnets.xtcross-private-subnetlist.ids
-  xtcross-unhealthy-threshhold      = 5
-  xtcross-healthcheck-interval      = 60
-  xtcross-domain-name               = var.xtcross-domain-name
-  xtcross-healthcheck-pathlist      = module.fluentbit.xtcross-healthcheck-pathlist
-  xtcross-healthcheck-timeout       = floor(60 / 2)
+  source                             = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/elb"
+  environment                        = var.environment
+  region                             = var.region
+  xtcross-loadbalancer-public-name   = "xtcross-${var.xtcross-service-name}-${var.environment}-lb"
+  xtcross-host-portlist              = module.fluentbit.xtcross-host-portlist
+  xtcross-listener-portlist          = module.fluentbit.xtcross-host-portlist
+  xtcross-listener-hostlist          = module.fluentbit.xtcross-listener-hostlist
+  xtcross-targetgroup-name           = "xtcross-${var.xtcross-service-name}-${var.environment}-tg"
+  xtcross-target-type                = "instance"
+  xtcross-healthy-threshhold         = 3
+  xtcross-loadbalancer-securitygroup = data.aws_security_group.xtcross-securitygroup.id
+  xtcross-vpc-id                     = data.aws_vpc.xtcross-vpc.id
+  xtcross-public-subnetlist          = data.aws_subnets.xtcross-public-subnetlist.ids
+  xtcross-private-subnetlist         = data.aws_subnets.xtcross-private-subnetlist.ids
+  xtcross-unhealthy-threshhold       = 5
+  xtcross-healthcheck-interval       = 60
+  xtcross-domain-name                = var.xtcross-domain-name
+  xtcross-healthcheck-pathlist       = module.fluentbit.xtcross-healthcheck-pathlist
+  xtcross-healthcheck-timeout        = floor(60 / 2)
 }
 
 module "service" {
@@ -124,11 +124,11 @@ module "cloudwatch" {
 }
 
 module "route53" {
-  source                    = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/route53"
-  environment               = var.environment
-  xtcross-domain-name       = var.xtcross-domain-name
-  xtcross-loadbalaner-name  = module.elb.xtcross-loadbalaner-name
-  xtcross-listener-hostlist = var.xtcross-listener-hostlist
+  source                           = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/route53"
+  environment                      = var.environment
+  xtcross-domain-name              = var.xtcross-domain-name
+  xtcross-loadbalancer-public-name = module.elb.xtcross-loadbalancer-public-name
+  xtcross-listener-hostlist        = var.xtcross-listener-hostlist
 }
 
 module "scheduletask" {
