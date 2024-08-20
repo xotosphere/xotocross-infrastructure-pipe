@@ -68,11 +68,12 @@ module "cloudwatch" {
 }
 
 module "route53" {
-  source                           = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/route53"
-  environment                      = var.environment
-  xtcross-domain-name              = var.xtcross-domain-name
-  xtcross-loadbalancer-public-name = module.elb.xtcross-loadbalancer-public-name
-  xtcross-listener-hostlist        = var.xtcross-listener-hostlist
+  source                            = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/route53"
+  environment                       = var.environment
+  xtcross-domain-name               = var.xtcross-domain-name
+  xtcross-loadbalancer-public-name  = module.elb.xtcross-loadbalancer-public-name
+  xtcross-loadbalancer-private-name = module.elb.xtcross-loadbalancer-private-name
+  xtcross-listener-hostlist         = var.xtcross-listener-hostlist
 }
 
 module "scheduletask" {
