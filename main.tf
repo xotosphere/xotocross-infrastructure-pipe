@@ -91,6 +91,6 @@ module "grafana" {
   xtcross-enable-monitor     = tobool(var.xtcross-enable-monitor)
   xtcross-password           = var.xtcross-password
   xtcross-username           = var.xtcross-username
-  xtcross-container-namelist = ["xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}front", "xtcross-${var.xtcross-service-name}-${var.xtcross-service-name}back"]
+  xtcross-container-namelist = var.xtcross-container-namelist
 }
 

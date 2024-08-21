@@ -17,4 +17,5 @@ variable "xtcross-container-definition" {}
 variable "xtcross-healthcheck-pathlist" {}
 variable "xtcross-listener-hostlist" {}
 variable "xtcross-vpn-security" {}
+variable "xtcross-container-namelist" {}
 variable "xtcross-task-memory" { default = 512 }
