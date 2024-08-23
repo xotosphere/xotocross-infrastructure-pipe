@@ -57,6 +57,7 @@ module "service" {
   xtcross-network-mode          = "bridge"
   xtcross-healthcheck-grace     = 60
   xtcross-listener-hostlist     = module.fluentbit.xtcross-listener-hostlist
+  xtcross-task-memory           = var.xtcross-task-memory
 }
 
 module "cloudwatch" {
