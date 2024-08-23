@@ -12,7 +12,7 @@ module "fluentbit" {
   xtcross-healthcheck-pathlist = var.xtcross-healthcheck-pathlist
   xtcross-listener-hostlist    = var.xtcross-listener-hostlist
   xtcross-container-portlist   = var.xtcross-container-portlist
-  xtcross-host-portlist        = var.xtcross-host-portlist
+  xtcross-host-portlist        = module.fluentbit.xtcross-host-portlist
 }
 
 module "elb" {
