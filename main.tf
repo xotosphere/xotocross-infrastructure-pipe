@@ -13,6 +13,7 @@ module "fluentbit" {
   xtcross-listener-hostlist    = var.xtcross-listener-hostlist
   xtcross-container-portlist   = var.xtcross-container-portlist
   xtcross-host-portlist        = var.xtcross-host-portlist
+  xtcross-enable-prometheus    = var.xtcross-enable-prometheus
 }
 
 module "elb" {

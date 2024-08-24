@@ -18,4 +18,5 @@ variable "xtcross-healthcheck-pathlist" {}
 variable "xtcross-listener-hostlist" {}
 variable "xtcross-vpn-security" {}
 variable "xtcross-container-namelist" {}
+variable "xtcross-enable-prometheus" { default = false }
 variable "xtcross-task-memory" { default = 512 }
