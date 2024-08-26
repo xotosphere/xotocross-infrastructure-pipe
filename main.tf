@@ -89,7 +89,6 @@ module "scheduletask" {
 module "grafana" {
   source                     = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/cross/grafana"
   environment                = var.environment
-  prefix                     = var.prefix
   xtcross-service-name       = var.xtcross-service-name
   xtcross-domain-name        = var.xtcross-domain-name
   xtcross-enable-monitor     = tobool(var.xtcross-enable-monitor)
