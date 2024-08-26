@@ -4,6 +4,7 @@ module "fluentbit" {
   source                       = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/cross/fluentbit"
   region                       = var.region
   environment                  = var.environment
+  prefix                       = var.prefix
   xtcross-service-version      = var.xtcross-service-version
   xtcross-service-name         = var.xtcross-service-name
   xtcross-enable-monitor       = tobool(var.xtcross-enable-monitor)
@@ -41,6 +42,7 @@ module "service" {
   source                        = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/service"
   region                        = var.region
   environment                   = var.environment
+  prefix                        = var.prefix
   xtcross-cluster-name          = var.xtcross-cluster-name
   xtcross-task-family           = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-task"
   xtcross-container-definition  = module.fluentbit.xtcross-container-definition
@@ -79,6 +81,7 @@ module "route53" {
 module "scheduletask" {
   source                  = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/scheduletask"
   environment             = var.environment
+  prefix                   = var.prefix
   xtcross-lambda-role-arn = data.aws_iam_role.xtcross-lambda-role.arn
   xtcross-function-name   = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-scheduletask"
 }
@@ -86,6 +89,7 @@ module "scheduletask" {
 module "grafana" {
   source                     = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/cross/grafana"
   environment                = var.environment
+  prefix                     = var.prefix
   xtcross-service-name       = var.xtcross-service-name
   xtcross-domain-name        = var.xtcross-domain-name
   xtcross-enable-monitor     = tobool(var.xtcross-enable-monitor)
