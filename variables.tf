@@ -2,6 +2,7 @@
 
 variable "region" {}
 variable "environment" {}
+variable "prefix" {}
 variable "xtcross-account-id" {}
 variable "xtcross-container-portlist" {}
 variable "xtcross-host-portlist" {}

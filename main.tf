@@ -20,11 +20,11 @@ module "elb" {
   source                             = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/elb"
   environment                        = var.environment
   region                             = var.region
-  xtcross-loadbalancer-name          = "xtcross-${var.xtcross-service-name}-${var.environment}-lb"
+  xtcross-loadbalancer-name          = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-lb"
   xtcross-host-portlist              = module.fluentbit.xtcross-host-portlist
   xtcross-listener-portlist          = module.fluentbit.xtcross-host-portlist
   xtcross-listener-hostlist          = module.fluentbit.xtcross-listener-hostlist
-  xtcross-targetgroup-name           = "xtcross-${var.xtcross-service-name}-${var.environment}-tg"
+  xtcross-targetgroup-name           = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-tg"
   xtcross-target-type                = "instance"
   xtcross-healthy-threshhold         = 3
   xtcross-loadbalancer-securitygroup = data.aws_security_group.xtcross-securitygroup.id
@@ -42,7 +42,7 @@ module "service" {
   region                        = var.region
   environment                   = var.environment
   xtcross-cluster-name          = var.xtcross-cluster-name
-  xtcross-task-family           = "xtcross-${var.xtcross-service-name}-${var.environment}-task"
+  xtcross-task-family           = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-task"
   xtcross-container-definition  = module.fluentbit.xtcross-container-definition
   xtcross-service-name          = var.xtcross-service-name
   xtcross-desired-count         = 1
@@ -52,8 +52,8 @@ module "service" {
   xtcross-targetgroup-arnlist   = values(module.elb.xtcross-targetgroup-arnlist)
   xtcross-constraint-placement  = "memberOf"
   xtcross-constraint-expression = "attribute:ecs.availability-zone in [${var.region}a, ${var.region}b]"
-  xtcross-execution-role-arn    = "arn:aws:iam::${var.xtcross-account-id}:role/xtcross-${var.environment}-execution-role"
-  xtcross-task-role-arn         = "arn:aws:iam::${var.xtcross-account-id}:role/xtcross-${var.environment}-execution-role"
+  xtcross-execution-role-arn    = "arn:aws:iam::${var.xtcross-account-id}:role/${var.prefix}-${var.environment}-execution-role"
+  xtcross-task-role-arn         = "arn:aws:iam::${var.xtcross-account-id}:role/${var.prefix}-${var.environment}-execution-role"
   xtcross-network-mode          = "bridge"
   xtcross-healthcheck-grace     = 60
   xtcross-listener-hostlist     = module.fluentbit.xtcross-listener-hostlist
@@ -64,7 +64,7 @@ module "service" {
 module "cloudwatch" {
   source                     = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/cloudwatch"
   environment                = var.environment
-  xtcross-ecs-loggroup-name  = "/aws/ecs/xtcross-${var.xtcross-service-name}-${var.environment}-log"
+  xtcross-ecs-loggroup-name  = "/aws/ecs/${var.prefix}-${var.xtcross-service-name}-${var.environment}-log"
   xtcross-loggroup-retention = 7
 }
 
@@ -80,7 +80,7 @@ module "scheduletask" {
   source                  = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/scheduletask"
   environment             = var.environment
   xtcross-lambda-role-arn = data.aws_iam_role.xtcross-lambda-role.arn
-  xtcross-function-name   = "xtcross-${var.xtcross-service-name}-${var.environment}-scheduletask"
+  xtcross-function-name   = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-scheduletask"
 }
 
 module "grafana" {
