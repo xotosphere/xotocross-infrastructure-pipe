@@ -54,8 +54,8 @@ module "service" {
   xtcross-targetgroup-arnlist   = values(module.elb.xtcross-targetgroup-arnlist)
   xtcross-constraint-placement  = "memberOf"
   xtcross-constraint-expression = "attribute:ecs.availability-zone in [${var.region}a, ${var.region}b]"
-  xtcross-execution-role-arn    = "arn:aws:iam::${var.xtcross-account-id}:role/${var.prefix}-${var.environment}-execution-role"
-  xtcross-task-role-arn         = "arn:aws:iam::${var.xtcross-account-id}:role/${var.prefix}-${var.environment}-execution-role"
+  xtcross-execution-role-arn    = "arn:aws:iam::${var.xtcross-account-id}:role/xtcross-${var.environment}-execution-role"
+  xtcross-task-role-arn         = "arn:aws:iam::${var.xtcross-account-id}:role/xtcross-${var.environment}-execution-role"
   xtcross-network-mode          = "bridge"
   xtcross-healthcheck-grace     = 60
   xtcross-listener-hostlist     = module.fluentbit.xtcross-listener-hostlist
