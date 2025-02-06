@@ -21,7 +21,7 @@ module "elb" {
   source                             = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/elb"
   environment                        = var.environment
   region                             = var.region
-  xtcross-loadbalancer-name          = "${var.xtcross-cluster-name}-${var.environment}"
+  xtcross-loadbalancer-name          = var.xtcross-cluster-name
   xtcross-host-portlist              = module.fluentbit.xtcross-host-portlist
   xtcross-listener-portlist          = module.fluentbit.xtcross-host-portlist
   xtcross-listener-hostlist          = module.fluentbit.xtcross-listener-hostlist
