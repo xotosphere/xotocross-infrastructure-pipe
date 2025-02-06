@@ -21,7 +21,7 @@ module "elb" {
   source                             = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/elb"
   environment                        = var.environment
   region                             = var.region
-  xtcross-loadbalancer-name          = "xtcross-${var.environment}"
+  xtcross-loadbalancer-name          = "${var.xtcross-cluster-name}-${var.environment}"
   xtcross-host-portlist              = module.fluentbit.xtcross-host-portlist
   xtcross-listener-portlist          = module.fluentbit.xtcross-host-portlist
   xtcross-listener-hostlist          = module.fluentbit.xtcross-listener-hostlist
@@ -84,6 +84,7 @@ module "scheduletask" {
   prefix                  = var.prefix
   xtcross-lambda-role-arn = data.aws_iam_role.xtcross-lambda-role.arn
   xtcross-function-name   = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-scheduletask"
+  xtcross-cluster-name    = var.xtcross-cluster-name
 }
 
 module "grafana" {
