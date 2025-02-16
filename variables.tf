@@ -7,7 +7,6 @@ variable "xtcross-account-id" {}
 variable "xtcross-container-portlist" {}
 variable "xtcross-host-portlist" {}
 variable "xtcross-cluster-name" {}
-variable "xtcross-organization" {}
 variable "xtcross-domain-name" {}
 variable "xtcross-service-name" {}
 variable "xtcross-service-version" {}

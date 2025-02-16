@@ -18,24 +18,21 @@ module "fluentbit" {
 }
 
 module "elb" {
-  source                             = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/elb"
-  environment                        = var.environment
-  region                             = var.region
-  xtcross-loadbalancer-name          = var.xtcross-cluster-name
-  xtcross-host-portlist              = module.fluentbit.xtcross-host-portlist
-  xtcross-listener-portlist          = module.fluentbit.xtcross-host-portlist
-  xtcross-listener-hostlist          = module.fluentbit.xtcross-listener-hostlist
-  xtcross-targetgroup-name           = "${var.prefix}-${var.xtcross-service-name}-${var.environment}"
-  xtcross-target-type                = "instance"
-  xtcross-healthy-threshhold         = 3
-  xtcross-loadbalancer-securitygroup = data.aws_security_group.xtcross-securitygroup.id
-  xtcross-vpc-id                     = data.aws_vpc.xtcross-vpc.id
-  xtcross-private-subnetlist         = data.aws_subnets.xtcross-private-subnetlist.ids
-  xtcross-unhealthy-threshhold       = 5
-  xtcross-healthcheck-interval       = 60
-  xtcross-domain-name                = var.xtcross-domain-name
-  xtcross-healthcheck-pathlist       = module.fluentbit.xtcross-healthcheck-pathlist
-  xtcross-healthcheck-timeout        = floor(60 / 2)
+  source                       = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/elb"
+  environment                  = var.environment
+  region                       = var.region
+  xtcross-loadbalancer-name    = var.xtcross-cluster-name
+  xtcross-host-portlist        = module.fluentbit.xtcross-host-portlist
+  xtcross-listener-hostlist    = module.fluentbit.xtcross-listener-hostlist
+  xtcross-targetgroup-name     = "${var.prefix}-${var.xtcross-service-name}-${var.environment}"
+  xtcross-target-type          = "instance"
+  xtcross-healthy-threshhold   = 3
+  xtcross-vpc-id               = data.aws_vpc.xtcross-vpc.id
+  xtcross-unhealthy-threshhold = 5
+  xtcross-healthcheck-interval = 60
+  xtcross-domain-name          = var.xtcross-domain-name
+  xtcross-healthcheck-pathlist = module.fluentbit.xtcross-healthcheck-pathlist
+  xtcross-healthcheck-timeout  = floor(60 / 2)
 }
 
 module "service" {
@@ -76,15 +73,6 @@ module "route53" {
   xtcross-domain-name       = var.xtcross-domain-name
   xtcross-loadbalancer-name = module.elb.xtcross-loadbalancer-name
   xtcross-listener-hostlist = var.xtcross-listener-hostlist
-}
-
-module "scheduletask" {
-  source                  = "github.com/xotosphere/xotocross-infrastructure-ecs//modules/scheduletask"
-  environment             = var.environment
-  prefix                  = var.prefix
-  xtcross-lambda-role-arn = data.aws_iam_role.xtcross-lambda-role.arn
-  xtcross-function-name   = "${var.prefix}-${var.xtcross-service-name}-${var.environment}-scheduletask"
-  xtcross-cluster-name    = var.xtcross-cluster-name
 }
 
 module "grafana" {
